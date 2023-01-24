@@ -1,5 +1,5 @@
-from controller import execute
+from controller import main_menu
 
 
 if __name__ == '__main__':
-    execute()
+    main_menu()

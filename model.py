@@ -21,12 +21,13 @@ def open_db(path: str) -> list:
         return []
     my_phonebook = [[word for word in strn.strip().split(';')] for strn in my_phonebook.split('\n')]
     for i, d in enumerate(my_phonebook):
-        db = dict()
-        db['lastname'] = d[0]
-        db['firstname'] = d[1]
-        db['phone.append'] = d[2]
-        db['phone_comment.append'] = d[3]
-        open_dbl.append(db)
+        if len(d) == 4:
+            db = dict()
+            db['lastname'] = d[0]
+            db['firstname'] = d[1]
+            db['phone.append'] = d[2]
+            db['phone_comment.append'] = d[3]
+            open_dbl.append(db)
     return open_dbl
 
 
@@ -39,9 +40,8 @@ def close_db(path: str) -> int:
         for i, d in enumerate(list_dbl):
             strn = ''
             for value in d.values():
-                strn += value + ' '
-            strn = strn.strip().replace(' ', ';')
-            strn += '\n'
+                strn += value + ';'
+            strn = strn[:-1] + '\n'
             my_phonebook += strn
         try:
             with open(path, 'w', encoding='UTF-8') as file:
@@ -51,3 +51,15 @@ def close_db(path: str) -> int:
         list_dbl = list()
         set_db(list_dbl)
         return 1
+
+
+def add_new_contact(lst: list) -> None:
+    if len(lst) == 4:
+        dbl = get_db()
+        db = dict()
+        db['lastname'] = lst[0]
+        db['firstname'] = lst[1]
+        db['phone.append'] = lst[2]
+        db['phone_comment.append'] = lst[3]
+        dbl.append(db)
+        set_db(dbl)
