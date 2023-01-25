@@ -28,16 +28,20 @@ def main_menu() -> None:
                 case 'Изменить контакт':
                     vw.report_change_contact(change_contact(ml.get_db()))
                     last_choice = 'Main menu'
+                case 'Удалить контакт':
+                    vw.report_delete_contact(delete_contact(ml.get_db()))
+                    last_choice = 'Main menu'
                 case 'Выход.\n---':
                     if ml.compare_two_listcontact(ml.open_db('phonebook.phn'), ml.get_db()):
                         break
                     else:
-                        save_exit()
+                        if len(ml.get_db()) != 0:
+                            save_exit()
                         break
                 case _:
                     last_choice = 'Main menu'
         except:
-            print('Что-то пошло не так')
+            vw.something_wron
         time.sleep(delay)
 
 
@@ -63,7 +67,7 @@ def new_contact(menu: list) -> int:
                 case 'Отменить':
                     break
         except:
-            print('Что-то пошло не так')
+            vw.something_wron
         time.sleep(delay)
     return 1
 
@@ -79,7 +83,7 @@ def change_contact(db: list) -> int:
         try:
             match last_choice:
                 case 'Choose the record':
-                    index = vw.get_record_choice(db)
+                    index = vw.get_record_change(db)
                     cell = db[index]
                     last_choice = 'Change menu'
                 case 'Change menu':
@@ -96,7 +100,36 @@ def change_contact(db: list) -> int:
                 case 'Отменить':
                     break
         except:
-            print('Что-то пошло не так')
+            vw.something_wrong()
+        time.sleep(delay)
+    return 1
+
+
+def delete_contact(db: list) -> int:
+    if len(db) == 0:
+        return 2
+    last_choice = 'Choose the record'
+    delete_menu = vw.delete_contact[:]
+    cell = list()
+    index = -1
+    while True:
+        try:
+            match last_choice:
+                case 'Choose the record':
+                    index = vw.get_record_delete(db)
+                    cell = db[index]
+                    last_choice = 'Change menu'
+                case 'Change menu':
+                    vw.show_changing_contact(index, cell)
+                    last_choice = vw.get_user_choice(delete_menu)
+                case 'Удалить контакт':
+                    cell = db.pop(index)
+                    ml.set_db(db)
+                    return 0
+                case 'Сохранить контакт':
+                    break
+        except:
+            vw.something_wrong()
         time.sleep(delay)
     return 1
 
@@ -115,5 +148,5 @@ def save_exit():
                 case 'Отменить изменения и выйти из программы':
                     break
         except:
-            print('Что-то пошло не так')
+            vw.something_wron
         time.sleep(delay)

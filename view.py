@@ -26,8 +26,13 @@ change_contact = [
     'Сохранить',
     'Отменить'
 ]
+delete_contact = [
+    'Подтвердите своё решение об удалении контакта: ',
+    'Удалить контакт',
+    'Сохранить контакт'
+]
 query_exit = [
-    'Записи в телефонном справочнике изменены, перед завершением программы,\nвыберите действие, которое нужно совершить с изменениями: ',
+    '\n\t!!!\nЗаписи в телефонном справочнике были изменены, перед завершением программы,\nвыберите действие, которое нужно произвести с изменениями: ',
     'Сохранить изменения, а потом выйти из программы',
     'Отменить изменения и выйти из программы'
 ]
@@ -131,12 +136,39 @@ def report_change_contact(report: int) -> None:
             print('Телефонная книга не открыта или пуста')
 
 
-def get_record_choice(db: list) -> int:
+def report_delete_contact(report: int) -> None:
+    match report:
+        case 0:
+            print('Контакт удалён')
+        case 1:
+            print('Контакт не был удалён')
+        case 2:
+            print('Телефонная книга не открыта или пуста')
+
+
+def get_record_change(db: list) -> int:
     choise = 0
     show_all_contacts(db)
     while True:
         try:
             choice = int(input('Из выденного списка выберите запись, которую желаете изменить: '))
+            if 0 < choice <= len(db):
+                break
+            else:
+                print('Ваш выбор выходит за пределы предложенных вариантов')
+                show_all_contacts(db)
+        except:
+            print('Значение должно быть целым числом из диапазона предлагаемых вариантов')
+            show_all_contacts(db)
+    return choice - 1
+
+
+def get_record_delete(db: list) -> int:
+    choise = 0
+    show_all_contacts(db)
+    while True:
+        try:
+            choice = int(input('Из выденного списка выберите запись, которую желаете удалить: '))
             if 0 < choice <= len(db):
                 break
             else:
@@ -164,3 +196,7 @@ def change_field_contact(lst: list, field: str) -> list:
     else:
         print('Количество полей не соответствует установленному формату - произошел сбой')
     return lst
+
+
+def something_wrong() -> None:
+    print('Что-то пошло не так')
