@@ -23,10 +23,10 @@ def open_db(path: str) -> list:
     for i, d in enumerate(my_phonebook):
         if len(d) == 4:
             db = dict()
-            db['lastname'] = d[0]
-            db['firstname'] = d[1]
-            db['phone.append'] = d[2]
-            db['phone_comment.append'] = d[3]
+            db['Фамилия'] = d[0]
+            db['Имя'] = d[1]
+            db['Номер телефона'] = d[2]
+            db['Тип номера'] = d[3]
             open_dbl.append(db)
     return open_dbl
 
@@ -57,9 +57,33 @@ def add_new_contact(lst: list) -> None:
     if len(lst) == 4:
         dbl = get_db()
         db = dict()
-        db['lastname'] = lst[0]
-        db['firstname'] = lst[1]
-        db['phone.append'] = lst[2]
-        db['phone_comment.append'] = lst[3]
+        db['Фамилия'] = lst[0]
+        db['Имя'] = lst[1]
+        db['Номер телефона'] = lst[2]
+        db['Тип номера'] = lst[3]
         dbl.append(db)
         set_db(dbl)
+
+
+def compare_two_listcontact(old: list, new: list) -> int:
+    if len(old) != len(new):
+        return 0
+    else:
+        for i in range(len(old)):
+            listoldkeys = [j for j in old[i].keys()]
+            listnewkeys = [j for j in new[i].keys()]
+            listoldvalues = [j for j in old[i].values()]
+            listnewvalues = [j for j in new[i].values()]
+            if len(listoldkeys) != len(listnewkeys) != len(listoldvalues) != len(listnewvalues):
+                return 0
+            else:
+                for k in range(len(listoldkeys)):
+                    if listoldkeys[k] != listnewkeys[k]:
+                        return 0
+                    else:
+                        if listoldvalues[k] != listnewvalues[k]:
+                            return 0
+        else:
+            return 1
+
+

@@ -2,7 +2,7 @@ import time
 import view as vw
 import model as ml
 
-delay = 2
+delay = 1
 
 
 def main_menu() -> None:
@@ -27,8 +27,13 @@ def main_menu() -> None:
                     last_choice = 'Main menu'
                 case 'Изменить контакт':
                     vw.report_change_contact(change_contact(ml.get_db()))
-                case 'Выход':
-                    break
+                    last_choice = 'Main menu'
+                case 'Выход.\n---':
+                    if ml.compare_two_listcontact(ml.open_db('phonebook.phn'), ml.get_db()):
+                        break
+                    else:
+                        save_exit()
+                        break
                 case _:
                     last_choice = 'Main menu'
         except:
@@ -37,6 +42,9 @@ def main_menu() -> None:
 
 
 def new_contact(menu: list) -> int:
+    db = ml.get_db()
+    if len(db) == 0:
+        return 2
     last_choice = 'Main menu'
     list_menu = menu[:]
     contact = [' ', ' ', ' ', ' ']
@@ -51,34 +59,61 @@ def new_contact(menu: list) -> int:
                     last_choice = 'Main menu'
                 case 'Сохранить':
                     ml.add_new_contact(contact)
-                    return 1
+                    return 0
                 case 'Отменить':
                     break
         except:
             print('Что-то пошло не так')
         time.sleep(delay)
-    return 0
+    return 1
 
 
 def change_contact(db: list) -> int:
     if len(db) == 0:
         return 2
-    last_choice = 'Main menu'
+    last_choice = 'Choose the record'
+    change_menu = vw.change_contact[:]
+    cell = list()
+    index = -1
     while True:
         try:
             match last_choice:
-                case 'Main menu':
-                    vw.show_all_contacts(db)
+                case 'Choose the record':
+                    index = vw.get_record_choice(db)
+                    cell = db[index]
+                    last_choice = 'Change menu'
+                case 'Change menu':
+                    vw.show_changing_contact(index, cell)
+                    last_choice = vw.get_user_choice(change_menu)
                 case ('Фамилия') | ('Имя') | ('Номер телефона') | ('Тип номера'):
-                    contact = vw.enter_field_contact(contact, last_choice)
-                    list_menu.pop(list_menu.index(last_choice))
-                    last_choice = 'Main menu'
+                    cell = vw.change_field_contact(cell, last_choice)
+                    change_menu.pop(change_menu.index(last_choice))
+                    last_choice = 'Change menu'
                 case 'Сохранить':
-                    ml.add_new_contact(contact)
-                    return 1
+                    db[index] = cell
+                    ml.set_db(db)
+                    return 0
                 case 'Отменить':
                     break
         except:
             print('Что-то пошло не так')
         time.sleep(delay)
-    return 0
+    return 1
+
+
+def save_exit():
+    last_choice = 'Main menu'
+    list_menu = vw.query_exit[:]
+    while True:
+        try:
+            match last_choice:
+                case 'Main menu':
+                    last_choice = vw.get_user_choice(list_menu)
+                case 'Сохранить изменения, а потом выйти из программы':
+                    vw.report_close_db(ml.close_db('phonebook.phn'))
+                    break
+                case 'Отменить изменения и выйти из программы':
+                    break
+        except:
+            print('Что-то пошло не так')
+        time.sleep(delay)
